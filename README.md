@@ -1,2 +1,4 @@
-# give_image_url
-Give your local image a URL to share and to embed anywhere
+* Simple image uploader to get url, uses imgur api
+* It uses vue.js
+* Please contribute
+* Pretify css and js present in index.html to contribute
