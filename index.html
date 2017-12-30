@@ -1,0 +1,76 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Give Image URL</title>
+    <meta name="description" content="Give your local image a url">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Give Image URL">
+    <meta property="og:description" content="Give your local image a url">
+    <meta property="og:image" content="">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    
+    <link rel="shortcut icon" type="image/ico" href="http://rajatsingla.in/favicon.ico">
+    <style>
+    	#firstIdfile,button{width:100%;line-height:25px;transform:scaleX(1.0012)}body{background-color:#f9fafb;position:relative;font-family:"Comic Sans MS",cursive,sans-serif;letter-spacing:.01rem;font-size:1.8rem;line-height:1.75em;color:#71757b;padding:35px 35px 100px}.main-content{border-width:1px;border-color:#edf0f4;border-style:solid;background-color:#fff;box-shadow:9px 16px 20.79px .21px rgba(219,222,228,.6);max-width:875px;height:275px;margin:auto;padding:4.5% 2.5%;text-align:center;position:relative}#firstIdfile,.main-content.link-content .link-div{border-width:1px;border-color:#71757b;border-style:solid}.tagline{color:#113e89;font-size:30px;font-weight:400;line-height:25px;text-align:center;margin-bottom:50px}#firstIdfile{max-width:630px;font-size:15px;text-align:right}input[type=file]::-webkit-file-upload-button{background-color:#113e89;width:190px;height:40px;color:#fff;font-size:15px;line-height:23px;text-align:center;transform:scaleX(1.0012)}.content-wrapper{text-align:center;width:100%;max-width:630px;margin:auto}.meta-button{color:#71757b;font-size:14px;line-height:25px;text-align:right;margin-top:14.5px}#firstIdsubmit{max-width:400px}button{background-color:#113e89;height:42px;color:#fff;font-size:15px;text-align:center;margin-top:50px;cursor:pointer}.site-footer{color:#BBC7CC;bottom:0;font-size:12px;position:absolute;margin:0 35px;left:0;right:0}.site-footer a{color:#BBC7CC;text-decoration:none;font-weight:700}section.copyright{width:45%;float:left}section.poweredby{float:right;width:45%;text-align:right}.main-content.link-content{padding:2.5% 2.5% 3.5%;margin-top:3px;height:auto}.main-content.link-content .content-wrapper{display:flex;flex-wrap:wrap;height:auto}.main-content.link-content .tagline{margin-bottom:25px;font-size:24px;width:100%}.main-content.link-content .link-div{font-size:15px;flex:3;padding:14px}.main-content.link-content button{float:right;flex:1;margin:0 0 0 26px;height:auto}.progress-bar{position:absolute;width:0;transition:width 1s;height:2px;background:#103e89;top:0;left:0}.error{text-align:center;width:100%;font-size:20px}@media only screen and (max-width:640px){body{padding:5px 5px 100px}.tagline{font-size:20px}input[type=file]{font-size:13px}input[type=file]::-webkit-file-upload-button{width:90px;font-size:13px}.error{font-size:15px}section.copyright,section.poweredby{width:100%;text-align:center}.main-content.link-content .tagline{font-size:18px}.main-content.link-content button{margin:10px 0 0;height:40px}}
+	</style>
+
+</head>
+
+<body>
+	
+	<div id="app">
+		<div class="main-content">
+			<div class="progress-bar" v-bind:style="{ width: progress + '%' }"></div>
+			<div class="content-wrapper">
+				<div class="tagline">
+					Shareable <strong>Image URL</strong> generator
+				</div>
+				<input id="firstIdfile" name="file" 
+				title="Upload file" placeholder="Upload file" type="file" accept=".png,.jpg">	
+				<div class="meta-button">Add Metadata</div>
+				<button v-on:click="generate" id="firstIdsubmit" name="submitbtn" title="Generate Link">
+					Generate Link
+				</button>
+			</div>
+		</div>
+
+		<div v-if="link_generated" class="main-content link-content">
+			<div class="content-wrapper">
+				<div class="tagline">
+					Shareable <a v-bind:href="link" target="new">Link</a> generated
+				</div>
+				<input type="text" v-bind:value="link" readonly="" class="link-div" id="link-div">
+				<button id="copybutton" name="copybutton" v-bind:title="copy_title" v-on:click="copy">
+					{{copy_title}}
+				</button>
+				
+			</div>
+		</div>
+
+		<div v-if="error.length>0" class="main-content link-content">
+			<div class="content-wrapper">
+				<div class="error">
+					{{error}}
+				</div>
+			</div>
+		</div>
+	</div>	
+
+
+	<footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="http://rajatsingla.in">Rajat's Blog</a> ©
+              • All rights reserved.
+      </section>
+      <section class="poweredby">Design by Tanmai Sharma
+        <a href="http://www.cyobb.com">tanny</a>
+      </section>
+    </footer>
+    <script>
+    	var app=new Vue({el:"#app",data:{upload_url:"https://api.imgur.com/3/image",pname:"image",link:"",link_generated:false,progress:0,error:"",copy_title:"Copy the Link",progress_handler:function(x){if(x.lengthComputable){this.progress=x.loaded/x.total*100}}},methods:{generate:function(){var that=this;that.error="";that.copy_title="Copy Link";that.link_generated=false;var formData=new FormData;var upload_url=this.upload_url;var fl_param_name=this.pname;var fl=document.getElementById("firstIdfile").files;if(fl.length){fl=fl[0];var fl_name=fl.name;formData.append(fl_param_name,fl,fl_name);var xhr=new XMLHttpRequest;xhr.upload.addEventListener("progress",this.progress_handler.bind(this));xhr.open("POST",upload_url,true);xhr.setRequestHeader("Authorization","Client-ID 2e56de818495150");xhr.send(formData);xhr.onreadystatechange=function(oEvent){if(xhr.readyState===4){if(xhr.status===200){document.getElementById("firstIdfile").value="";that.link_generated=true;that.link=JSON.parse(xhr.response).data.link;console.log(that.link);that.progress=0}else{that.error="Something went wrong, Please try again."}}}}else{that.error="Select a File"}},copy:function(){var copyText=document.getElementById("link-div");copyText.select();document.execCommand("Copy");this.copy_title="copied"}}});
+    </script>
+</body>
